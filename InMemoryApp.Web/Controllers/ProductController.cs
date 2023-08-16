@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using InMemoryApp.Web.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace InMemoryApp.Web.Controllers;
@@ -24,6 +25,9 @@ public class ProductController : Controller
         {
             _memoryCache.Set("callback", $"{key}-->{value}=>reason:{reason}");
         });
+
+        Product product = new Product { Id = 1, Name = "Kalem", Price = 200 };
+        _memoryCache.Set<Product>("product:1", product);//otomatik serialize.
         
         _memoryCache.Set<string>("date", DateTime.Now.ToString(), options);
 
@@ -48,6 +52,8 @@ public class ProductController : Controller
         _memoryCache.TryGetValue<string>("callback", out string callback);
         ViewBag.date = date;
         ViewBag.callback = callback;
+
+        ViewBag.product = _memoryCache.Get<Product>("product:1");
         return View();
     }
 }
